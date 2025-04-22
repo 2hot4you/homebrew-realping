@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# realping: 查询域名真实 IP 并测试 Ping 延迟（绕过 DNS 劫持）
+
+if [ -z "$1" ]; then
+    echo "Usage: realping <domain>"
+    exit 1
+fi
+
+DOMAIN="$1"
+REAL_IP=$(dig "$DOMAIN" @8.8.8.8 +short | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -n1)
+
+if [ -z "$REAL_IP" ]; then
+    echo "❌ Failed to resolve $DOMAIN"
+    exit 1
+fi
+
+echo "🎯 Pinging $DOMAIN ($REAL_IP)..."
+ping "$REAL_IP"
